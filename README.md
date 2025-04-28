@@ -34,6 +34,7 @@ The script runs headlessly and extracts information from a predefined target (ad
 You can customize the scraping logic by editing the functions in the components/ directory.
 
 ✨ Contributions
+
 Feel free to fork the repo and submit pull requests. Bug reports and suggestions are welcome via Issues.
 
 
