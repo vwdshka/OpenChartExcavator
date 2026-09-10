@@ -1,40 +1,40 @@
 # OpenChartExcavator
 
-OpenChartExcavator is a Python-based web scraping tool that leverages Selenium to extract structured data from websites, such as product details, images, reviews, links, and more. It is modular, easy to extend, and ideal for scraping web pages for chart-based or product data.
+Automates the extraction and structuring of dynamic web data into consumable formats using headless browser automation.
 
----
+## The Problem
 
-## 🚀 Features
+Modern web applications heavily rely on client-side rendering (CSR) and asynchronous data fetching, rendering traditional HTTP-based HTML parsing libraries ineffective. Extracting critical business intelligence—such as product metrics, dynamic charts, and user reviews—requires an engine capable of natively executing JavaScript, handling complex DOM mutations, and orchestrating precise synchronization waits before harvesting the data.
 
-- Headless Chrome automation via Selenium
-- Modular components for scraping titles, links, reviews, images, and more
-- Wait-for-page-load mechanism for dynamic content
-- Clean and readable architecture for customization
+## Architecture
 
----
-## 📦 Installation
+```mermaid
+flowchart LR
+    Target[Target Web Application] <-->|HTTP/HTTPS| Chrome[Headless Chrome]
+    Chrome <-->|WebDriver Protocol| Selenium[Selenium API]
+    
+    subgraph OpenChartExcavator
+        Selenium --> Wait[Synchronization & Wait Logic]
+        Wait --> DOM[DOM Traversal]
+        DOM --> Modules[Component Modules: Titles, Links, Images]
+    end
+    
+    Modules -->|Structured Payload| Output[Data Sink / File]
 
-1. **Clone the repository**
+```
 
-2. Install dependencies
+## Quickstart
 
-It is recommended to use a virtual environment.
+```bash
+git clone https://github.com/vwdshka/OpenChartExcavator.git
+cd OpenChartExcavator
+pip install -r requirements.txt && python OpenChartExcavator.py
 
-pip install -r requirements.txt
+```
 
-3. Make sure you have Chrome installed
+## Design Decisions
 
-The script uses ChromeDriver. Ensure it's compatible with your version of Google Chrome.
-
-⚙️ Usage
-
-python OpenChartExcavator.py
-
-The script runs headlessly and extracts information from a predefined target (adjustable in the components). 
-You can customize the scraping logic by editing the functions in the components/ directory.
-
-✨ Contributions
-
-Feel free to fork the repo and submit pull requests. Bug reports and suggestions are welcome via Issues.
-
-
+* **Selenium WebDriver over Static Parsers:** Selected specifically to support Single Page Applications (SPAs) and dynamic content loading. While carrying a heavier footprint than static parsers like `BeautifulSoup`, browser automation is mathematically required to unpack payloads rendered exclusively via client-side JavaScript execution.
+* **Modular Component Architecture:** The extraction logic is strictly decoupled into isolated modules within the `components/` directory. This separation of concerns ensures that when a target website updates its DOM structure, only the specific component responsible for that data point requires refactoring, protecting the core orchestration loop from regressions.
+* **Headless Execution Topology:** Running the browser process headlessly eliminates the need for an active display server (X11/Wayland). This architectural choice directly enables containerization and allows the crawler to be deployed on highly cost-effective, headless Linux servers or CI/CD runner pipelines.
+* **Explicit Synchronization Mechanisms:** Implementing explicit wait conditions rather than hardcoded timeouts or implicit polling prevents `StaleElementReferenceException` errors. By forcing the runtime to wait for specific DOM states or elements to become actionable, the engine achieves a significantly higher reliability rate on heavily throttled or high-latency network connections.
